@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="https://unpkg.com/simpledotcss/simple.min.css">
+</head>
+<style>
+    textarea{
+        margin-top: 1rem;
+        margin-bottom: 0;
+    }
+    .btnTweet{
+        margin-top: 0;
+        float: right;
+    }
+</style>
+<body>
+    <h3>Feed</h3>
+    <hr>
+    <div id="feed">
+
+    </div>
+    <a target="_blank" href="/post">Open this link to post something</a>
+</body>
+
+<script>
+    const feedWall = document.getElementById("feed");
+    const streamEvent = new EventSource("http://localhost:8080/stream")
+    streamEvent.addEventListener("error", (event) => {
+        console.log(`error happen ${event}`);
+        
+        console.log(`clossing the connection`);
+        streamEvent.close()
+    });
+
+    streamEvent.addEventListener("message", (event) => {
+        const dateFormat = new Date(event.timeStamp);
+        console.log(dateFormat)
+        const newElement = document.createElement("p");
+        newElement.textContent = `${new Date(event.timeStamp)} : ${event.data}`;
+        feedWall.append(newElement)
+    });
+</script>
+</html>
